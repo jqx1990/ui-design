@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
+<head>
+    <link rel="stylesheet" href="css/independent.css">
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <!--><link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css"><!-->
+    <meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Assignment1</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- JAVASCRIPT to clear search text when the field is clicked -->
+    <script type="text/javascript">
+        window.onload = function(){
+            //Get submit button
+            var submitbutton = document.getElementById("search");
+            var since_field = document.getElementById('since');
+            var until_field = document.getElementById('until');
+            var place_field = document.getElementById('place');
+            var num_tweets_field = document.getElementById('num_tweets');
+            //Add listener to submit button
+            if(submitbutton.addEventListener){
+                submitbutton.addEventListener("click", function() {
+                    if (submitbutton.value == 'Search some tweets!'){
+                        submitbutton.value = '';
+                    }
+                });
+            }
+            if(since_field.addEventListener){
+                since_field.addEventListener("click", function() {
+                    if (since_field.value == 'YYYY-MM-DD'){
+                        since_field.value = '';
+                    }
+                });
+            }
+            if(until_field.addEventListener){
+                until_field.addEventListener("click", function() {
+                    if (until_field.value == 'YYYY-MM-DD'){
+                        until_field.value = '';
+                    }
+                });
+            }
+            if(place_field.addEventListener){
+                place_field.addEventListener("click", function() {
+                    if (place_field.value == 'e.g. Venice'){
+                        place_field.value = '';
+                    }
+                });
+            }
+            if(num_tweets_field.addEventListener){
+                num_tweets_field.addEventListener("click", function() {
+                    if (num_tweets_field.value == '50 by default'){
+                        num_tweets_field.value = '';
+                    }
+                });
+            }
+        }
+    </script>
+
+</head>
+<body>
+<!-- HTML for SEARCH BAR -->
+<div id="search_box">
+    <form id="new_search" method="get" action="#" >
+        <label><input type="text" id="search" class="text_field" name="q" size="50" maxlength="120" value="Search some tweets!"><input type="submit" value="Search!" class="search_button"></label>
+        <ul><li><label><img src='since.png'><input type="text" id="since" class="text_input" name="since" size="20" value="YYYY-MM-DD" title="Must be in form of YYYY-MM-DD!" maxlength="30"></label></li>
+            <li><label><img src='until.png'><input type="text" id="until" class="text_input" name="until" size="20" value="YYYY-MM-DD" title="Must be in form of YYYY-MM-DD!" maxlength="30"></label></li>
+            <li><label><img src='place.png'><input type="text" id="place" class="text_input" name="place" size="20" value="e.g. Venice" maxlength="30"></label></li>
+            <li><label><img src='num of tweets.png'><input type="text" id="num_tweets" class="text_input" value="50 by default" size="20" maxlength="40"></label></li></ul>
+        <!--Number of Tweets<input type="text" id="num_tweets" class="text_input" size="20" maxlength="40">-->
+    </form>
+    <div class="search_clean"></div>
+</div>
+
+<ul id="history"></ul>
+
+<div class="main">
+
+<ul class = "tweet_entry">   </ul>
+
+</div>
+
+<ul id="groups"></ul>
+
+<script type="text/javascript" src="js/vendor/jquery-1.10.1.min.js"></script>
+<!--<script type="text/javascript" src="js/vendor/jquery-1.3.2.min.js"></script>-->
+<script type="text/javascript" src="js/vendor/codebird-js/sha1.js"></script>
+<script type="text/javascript" src="js/vendor/codebird-js/codebird.js"></script>
+<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

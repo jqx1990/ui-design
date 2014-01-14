@@ -1,0 +1,25 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	background-color: #000000;
+}
+
+#video_frame {
+	background-color:#000000;
+}
+
+#container {
+	text-align: center
+}
+
+#canvas_frame {
+	position:absolute;
+/*	margin-left:auto;*/
+	left: 0px;
+	top:0px;
+}
+
+#myCanvas{
+	opacity: 1
+}

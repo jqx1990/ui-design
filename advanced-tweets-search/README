@@ -1,0 +1,15 @@
+Qingxiang Jia
+qj2125
+qj2125@columbia.edu
+
+No special instruction, just open the index.html (better with Chrome, since the UI is optimized for Chrome).
+
+I try to make the user interface as attractive as possible. By doing this, all the <div>'s are with rounded corner (by using css). I also added a carefully chosen background picture. The lower half of the page is intentionally left blank, because after the first search, it will be used to show the results. In the search box, and all other input fields, the user will be notified to input, as well as the required form. To ensure the user input the data in correct form, I also added tooltip for "since" and "until." Also, the recent 10 searches have a "cloud like" effect, to imply that those are the past searches. Besides the required functionality, I also added the avatar of the "Twittist."
+
+ATTENTION: Sometimes the internet is slow, so when you search will not come back instantly, please wait for a while. If it delays too much, it may never response. You can refresh the page, and start a new search. This is not due to the JavaScript I wrote (I test this by using console.log to trace the execution). One exception is that if you search a time range which is over one week, there will be no response.
+
+Thank you for grading!
+
+Qingxiang Jia
+
+Oct.4.2013

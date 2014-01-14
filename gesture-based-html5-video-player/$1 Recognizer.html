@@ -1,0 +1,270 @@
+	<!DOCTYPE html>
+	<!-- saved from url=(0049)http://depts.washington.edu/aimgroup/proj/dollar/ -->
+	<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>$1 Recognizer</title>
+	<link href="./$1 Recognizer_files/styles.css" rel="stylesheet" type="text/css">
+	<link href="./$1 Recognizer_files/toastr.css" rel="stylesheet"/>
+	<!--[if IE]><script src="excanvas.js"></script><![endif]-->
+	<script type="text/javascript" src="./$1 Recognizer_files/canvas.text.js"></script>
+	<script type="text/javascript" src="./$1 Recognizer_files/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="./$1 Recognizer_files/toastr.js"></script>
+	<script type="text/javascript" src="./$1 Recognizer_files/gentilis-normal-normal.js"></script>
+	<script type="text/javascript" src="./$1 Recognizer_files/dollar.js"></script><style type="text/css"></style>
+	<script type="text/javascript"><!--
+		    //
+			// Startup
+			//
+			toastr.options = {
+				"closeButton": false,
+				"debug": false,
+				"positionClass": "toast-top-right",
+				"onclick": null,
+				"showDuration": "300",
+				"hideDuration": "1000",
+				"timeOut": "4000",
+				"extendedTimeOut": "1000",
+				"showEasing": "swing",
+				"hideEasing": "linear",
+				"showMethod": "fadeIn",
+				"hideMethod": "fadeOut"
+			}
+			var _isDown, _points, _r, _g, _rc;
+			function onLoadEvent()
+			{
+				_points = new Array();
+				_r = new DollarRecognizer();
+
+				var canvas = document.getElementById('myCanvas');
+				context = canvas.getContext('2d');
+				canvas.width = window.innerWidth - 50;
+				canvas.height = window.innerHeight;
+				toastr.success("You can control the player with gestures.", "Welcome to use Jia's HTML 5 Video Player");
+
+				_g = canvas.getContext('2d');
+				_g.fillStyle = "rgb(0,0,225)";
+				_g.strokeStyle = "rgb(0,0,225)";
+				_g.lineWidth = 3;
+				_g.font = "16px Gentilis";
+				_rc = getCanvasRect(canvas); // canvas rect on page
+				_g.fillStyle = "rgb(0,0,0)";
+				_g.fillRect(0, 0, _rc.width, 20);
+
+				_isDown = false;
+			}
+			function getCanvasRect(canvas)
+			{
+				var w = canvas.width;
+				var h = canvas.height;
+
+				var cx = canvas.offsetLeft;
+				var cy = canvas.offsetTop;
+				while (canvas.offsetParent != null)
+				{
+					canvas = canvas.offsetParent;
+					cx += canvas.offsetLeft;
+					cy += canvas.offsetTop;
+				}
+				return {x: cx, y: cy, width: w, height: h};
+			}
+			function getScrollY()
+			{
+				var scrollY = 0;
+				if (typeof(document.body.parentElement) != 'undefined')
+				{
+					scrollY = document.body.parentElement.scrollTop; // IE
+				}
+				else if (typeof(window.pageYOffset) != 'undefined')
+				{
+					scrollY = window.pageYOffset; // FF
+				}
+				return scrollY;
+			}
+			//
+			// Mouse Events
+			//
+			function mouseDownEvent(x, y)
+			{
+				document.onselectstart = function() { return false; } // disable drag-select
+				document.onmousedown = function() { return false; } // disable drag-select
+				_isDown = true;
+				x -= _rc.x;
+				y -= _rc.y - getScrollY();
+				if (_points.length > 0)
+					_g.clearRect(0, 0, _rc.width, _rc.height);
+				_points.length = 1; // clear
+				_points[0] = new Point(x, y);
+				drawText("Recording unistroke...");
+				_g.fillRect(x - 4, y - 3, 9, 9);
+			}
+			function mouseMoveEvent(x, y)
+			{
+				if (_isDown)
+				{
+					x -= _rc.x;
+					y -= _rc.y - getScrollY();
+					_points[_points.length] = new Point(x, y); // append
+					drawConnectedPoint(_points.length - 2, _points.length - 1);
+				}
+			}
+			function mouseUpEvent(x, y)
+			{
+				document.onselectstart = function() { return true; } // enable drag-select
+				document.onmousedown = function() { return true; } // enable drag-select
+				_g.clearRect(0, 0, _rc.width, _rc.height);
+				if (_isDown)
+				{
+					_isDown = false;
+					if (_points.length >= 10)
+					{
+						var result = _r.Recognize(_points, document.getElementById('useProtractor').checked);
+						drawText("Result: " + result.Name + " (" + round(result.Score,2) + ").");
+						if (result.Name == "play")
+						{
+							document.getElementById('video').play();
+							toastr.success("PLAY");
+						}
+						else if(result.Name == "pause")
+						{
+							document.getElementById('video').pause();
+							toastr.success("PAUSE");
+						}
+						else if(result.Name == "volume+")
+						{
+							document.getElementById('video').volume+=0.1;
+							toastr.success("VOLUME UP");
+						}
+						else if(result.Name == "volume-")
+						{
+							document.getElementById('video').volume-=0.1;
+							toastr.success("VOLUME DOWN");
+						}
+						else if(result.Name == "mute")
+						{
+							document.getElementById('video').mute=true;
+							toastr.success("MUTE");
+						}
+						else if(result.Name == "seek")
+						{
+							document.getElementById('video').currentTime+=10;
+							toastr.success("SEEK");
+						}
+						else if(result.Name == "playbackRate+")
+						{
+							document.getElementById('video').playbackRate++;
+							toastr.success("PLAYBACK RATE FASTER");
+						}
+						else if(result.Name == "playbackRate-")
+						{
+							document.getElementById('video').playbackRate--;
+							toastr.success("PLAYBACK RATE SLOWER");
+						}
+						else if(result.Name == "width+")
+						{
+							document.getElementById('video').width+=10;
+							toastr.success("VIDEO WIDTH INCREASED");
+						}
+						else if(result.Name == "width-")
+						{
+							document.getElementById('video').width-=10;
+							toastr.success("VIDEO WIDTH DECREASED");
+						}
+						else if(result.Name == "height+")
+						{
+							document.getElementById('video').height+=10;
+							toastr.success("VIDEO HEIGHT INCREASED");
+						}else if(result.Name == "height-")
+						{	
+							document.getElementById('video').height-=10;
+							toastr.success("VIDEO HEIGHT DECREASED");
+						}
+					}
+					else // fewer than 10 points were inputted
+					{
+						drawText("Too few points made. Please try again.");
+					}
+				}
+			}
+			function drawText(str)
+			{
+				_g.fillStyle = "rgb(255,255,136)";
+				_g.fillRect(0, 0, _rc.width, 0);
+				_g.fillStyle = "rgb(0,0,255)";
+				_g.fillText(str, 1, 14);
+			}
+			function drawConnectedPoint(from, to)
+			{
+				_g.beginPath();
+				_g.moveTo(_points[from].X, _points[from].Y);
+				_g.lineTo(_points[to].X, _points[to].Y);
+				_g.closePath();
+				_g.stroke();
+			}
+			function round(n, d) // round 'n' to 'd' decimals
+			{
+				d = Math.pow(10, d);
+				return Math.round(n * d) / d
+			}
+			//
+			// Unistroke Adding and Clearing
+			//
+			function onClickAddExisting()
+			{
+				if (_points.length >= 10)
+				{
+					var unistrokes = document.getElementById('unistrokes');
+					var name = unistrokes[unistrokes.selectedIndex].value;
+					var num = _r.AddGesture(name, _points);
+					drawText("\"" + name + "\" added. Number of \"" + name + "\"s defined: " + num + ".");
+				}
+			}
+			function onClickAddCustom()
+			{
+				var name = document.getElementById('custom').value;
+				if (_points.length >= 10 && name.length > 0)
+				{
+					var num = _r.AddGesture(name, _points);
+					drawText("\"" + name + "\" added. Number of \"" + name + "\"s defined: " + num + ".");
+				}
+			}
+			function onClickCustom()
+			{
+				document.getElementById('custom').select();
+			}
+			function onClickDelete()
+			{
+				var num = _r.DeleteUserGestures(); // deletes any user-defined unistrokes
+				alert("All user-defined gestures have been deleted. Only the 1 predefined gesture remains for each of the " + num + " types.");
+			}
+		// -->
+	</script>
+</head>
+<body onload="onLoadEvent()">
+	<div id="Content">
+		<div id="container">
+			<div id='video_frame'>
+				<video id="video" src="./ferro.mp4" width="640" height="480" controls>
+					Your browser does not support the <code>video</code> element.
+				</video></div>
+				<div id='canvas_frame'>
+					<!-- Canvas -->
+					<table border="0" cellspacing="10">
+						<tbody><tr>
+							<td valign="top">
+								<form style="font-size:10pt">
+									<input type="hidden" name="search" id="useGSS" checked="">
+									<br>
+									<input type="hidden" name="search" id="useProtractor">
+								</form>
+							</td>
+							<td valign="top" align="left">
+								<canvas id="myCanvas" style="background-color:#dddddd display" onmousedown="mouseDownEvent(event.clientX, event.clientY)" onmousemove="mouseMoveEvent(event.clientX, event.clientY)" onmouseup="mouseUpEvent(event.clientX, event.clientY)" oncontextmenu="return false;">
+									<span style="background-color:#ffff88;">The &lt;canvas&gt; element is not supported by this browser.</span>
+								</canvas>
+							</td>
+						</tr>
+					</tbody></table>
+				</div>
+			</div>
+
+			<div class="wsx_fade"></div><div class="wsx_scroll" style="display: block; opacity: 0; pointer-events: none; top: 0px;"><div class="wsx_scroll_bar" style="background-color: rgb(255, 102, 0); opacity: 0.6;"></div></div><iframe frameborder="0" scrolling="no" style="background-color: transparent; border: 0px; display: none;"></iframe><div id="GOOGLE_INPUT_CHEXT_FLAG" style="display: none;" input="null" input_stat="{&quot;tlang&quot;:null,&quot;tsbc&quot;:null,&quot;pun&quot;:null,&quot;mk&quot;:false,&quot;ss&quot;:true}"></div></body></html>
